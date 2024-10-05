@@ -35,7 +35,7 @@ async def get_imdb(file_name):
     return None
     
 async def movie_name_format(file_name):
-  filename = re.sub(r'http\S+', '', re.sub(r'@\w+|#\w+', '', file_name).replace('_', ' ').replace('[', '').replace(']', '').replace('(', '').replace(')', '').replace('{', '').replace('}', '').replace('.', '').replace('@', '').replace(':', '').replace(';', '').replace("'", '').replace('-', '').replace('!', '')).strip()
+  filename = re.sub(r'http\S+', '', re.sub(r'@\w+|#\w+', '', file_name).replace('_', ' ').replace('[', '').replace(']', '').replace('(', '').replace(')', '').replace('{', '').replace('}', '').replace('.', ' ').replace('@', '').replace(':', '').replace(';', '').replace("'", '').replace('-', '').replace('!', '')).strip()
   return filename
 
 async def check_qualities(text, qualities: list):
@@ -72,7 +72,7 @@ async def send_movie_updates(bot, file_name, caption, file_id):
       return 
     processed_movies.add(movie_name)    
     poster_url = await get_imdb(movie_name)    
-    caption_message = f"#New_File_Uploded✅\n\nFile_Name:- {movie_name}\nLanguage:- {language}\nQuality:- {quality}"    
+    caption_message = f"#New_File_Added ✅\n\nFile_Name:- <code>{movie_name}</code>\n\nLanguage:- {language}\n\nQuality:- {quality}"    
     movie_update_channel = await db.movies_update_channel_id()    
     btn = [
       [InlineKeyboardButton('Get File', url=f'https://t.me/{temp.U_NAME}?start=pm_mode_file_{ADMINS[0]}_{file_id}')]
