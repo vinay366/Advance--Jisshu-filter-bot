@@ -70,7 +70,7 @@ async def send_movie_updates(bot, file_name, caption, file_id):
         for lang in nb_languages:
             if lang.lower() in caption.lower():
                 language += f"{lang}, "
-                language = language.strip(", ") or "Not Idea"
+        language = language.strip(", ") or "Not Idea"
         movie_name = await movie_name_format(file_name)    
         if movie_name in processed_movies:
             return 
