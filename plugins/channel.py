@@ -24,7 +24,7 @@ async def media(bot, message):
         media.file_type = message.media.value
         media.caption = message.caption
         success_sts = await save_file(media)
-        if success_sts == 'suc' and await db.get_pm_search_status(bot_id):
+        if success_sts == 'suc' and await db.get_send_movie_update_status(bot_id):
             file_id, file_ref = unpack_new_file_id(media.file_id)
             await send_movie_updates(bot, file_name=media.file_name, caption=media.caption, file_id=file_id)
 
