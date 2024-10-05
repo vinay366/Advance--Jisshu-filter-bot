@@ -18,12 +18,13 @@ media_filter = filters.document | filters.video
 
 @Client.on_message(filters.chat(CHANNELS) & media_filter)
 async def media(bot, message):
+    bot_id = bot.me.id
     media = getattr(message, message.media.value, None)
     if media.mime_type in ['video/mp4', 'video/x-matroska']: 
         media.file_type = message.media.value
         media.caption = message.caption
         success_sts = await save_file(media)
-        if success_sts == 'suc':
+        if success_sts == 'suc' and await db.get_pm_search_status(bot_id):
             file_id, file_ref = unpack_new_file_id(media.file_id)
             await send_movie_updates(bot, file_name=media.file_name, caption=media.caption, file_id=file_id)
 
