@@ -13,7 +13,8 @@ aiofiles
 ffmpeg-python 
 ffmpeg 
 requests 
-aiohttp 
+aiohttp
+bs4
 telegraph 
 ujson 
 pyshorteners 
