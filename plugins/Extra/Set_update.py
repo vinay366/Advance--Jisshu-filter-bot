@@ -5,7 +5,7 @@ from database.users_chats_db import db
 
 
 @Client.on_message(filters.command("set_muc") & filters.user(ADMINS))
-async def set_muc_id(client: Client, message: Message):
+async def set_muc_id(client, message):
     try:
         if len(message.command) < 2:
             await message.reply("Please provide A Channel ID To Set The Movies Update Channel.\n\n**Usage:** `/set_muc -1001234567890`")
