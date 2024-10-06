@@ -12,7 +12,7 @@ async def set_muc_id(client, message):
             return
         id = message.command[1]
         if not id.startswith('-100') or len(id) != 14:
-            await message.reply("Invalid Channel ID. Please Make Sure It Starts With '-100'.")
+            await message.reply("Invalid Channel ID. Please Make Sure It Starts With '-100' And Should Be Correct Channel Id.")
             return
         is_suc = await db.movies_update_channel_id(id)
         if is_suc:
