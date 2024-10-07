@@ -44,7 +44,8 @@ async def media(bot, message):
         success_sts = await save_file(media)
         if success_sts == 'suc':
             try:
-                latest_movie = await get_imdb(media.file_name)
+                movie_name = name_format(media.file_name)
+                latest_movie = await get_imdb(movie_name)
                 recent_movies.add(latest_movie)
                 if await db.get_send_movie_update_status(bot_id):
                     file_id, file_ref = unpack_new_file_id(media.file_id)
@@ -56,25 +57,15 @@ async def media(bot, message):
 
 @Client.on_message(filters.command(["latest"]))
 async def latest_movies(bot, message):
-  """
-  Handles the /latest command to show the last 20 uploaded movies.
-  """
-  try:
-    # Get the last 20 movies from the temporary container
-    last_movies = list(recent_movies)[-20:]
-
-    # Build the message with the movie names
-    message_text = "**Latest Movies:**\n\n"
-    for movie_name in last_movies:
-      message_text += f"• {movie_name}\n"
-
-    # Send the message to the user
-    await message.reply_text(message_text)
-
-  except Exception as e:
-    print(f"Error showing latest movies: {e}")
-    await bot.send_message(LOG_CHANNEL, f"Error showing latest movies: {e}")
-
+ try:
+     last_movies = list(recent_movies)[-20:]
+     message_text = "Latest Movies:\n\n"
+     for num, movie_name in enumerate(last_movies, start=1):
+         message_text += f"{num}. {movie_name}\n"
+     await message.reply_text(message_text)
+ except Exception as e:
+     print(f"Error showing latest movies: {e}")
+     await bot.send_message(LOG_CHANNEL, f"Error showing latest movies: {e}")
 
 def name_format(file_name: str):
     file_name = file_name.lower()
