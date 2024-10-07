@@ -79,7 +79,7 @@ def modify_name(file_name: str):
     return movie_file_name
     
 async def get_latest_imdb(file_name):
-    movie_file_name = name_format(file_name)
+    movie_file_name = modify_name(file_name)
     imdb = await get_poster(movie_file_name)
     if imdb:
         return imdb.get('title')
