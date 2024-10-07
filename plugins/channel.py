@@ -11,7 +11,7 @@ from utils import get_poster, temp
 import re
 from database.users_chats_db import db
 
-recent_movies = set() 
+recent_movies = []
 
 processed_movies = set()
 media_filter = filters.document | filters.video
@@ -45,10 +45,10 @@ async def media(bot, message):
         if success_sts == 'suc':
             try:
                 movie_name = name_format(media.file_name)
-                latest_movie = await get_imdb(movie_name)
+                latest_movie = await get_latest_imdb(movie_name)
                 if latest_movie in recent_movies:
                     return
-                recent_movies.add(latest_movie)
+                recent_movies.append(latest_movie)
                 if await db.get_send_movie_update_status(bot_id):
                     file_id, file_ref = unpack_new_file_id(media.file_id)
                     await send_movie_updates(bot, file_name=media.file_name, caption=media.caption, file_id=file_id)
@@ -61,7 +61,7 @@ async def media(bot, message):
 async def latest_movies(bot, message):
  try:
      last_movies = list(recent_movies)[-20:]
-     message_text = "Latest Movies:\n\n"
+     message_text = "List of New Added Movies In DB:\n\n"
      for num, movie_name in enumerate(last_movies, start=1):
          message_text += f"{num}. {movie_name}\n"
      await message.reply_text(message_text)
