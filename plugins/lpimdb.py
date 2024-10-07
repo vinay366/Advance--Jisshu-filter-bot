@@ -2,37 +2,46 @@ from pyrogram import Client, filters
 from pyrogram.types import Message
 import requests
 from bs4 import BeautifulSoup
+from urllib.parse import urljoin
 
+
+def get_poster_url(movie_name):
+  """Tries to extract the poster URL from BookMyShow for a given movie."""
+
+  base_url = "https://in.bookmyshow.com"
+  search_url = f"{base_url}/search/movies?q={movie_name}"
+
+  try:
+    response = requests.get(search_url)
+    response.raise_for_status() 
+
+    soup = BeautifulSoup(response.text, 'html.parser')
+
+    movie_listing = soup.find('div', class_='movie-listing')
+    if movie_listing:
+      poster_element = movie_listing.find('img', class_='movie-poster')
+      if poster_element:
+        poster_url = poster_element['src']
+        return urljoin(base_url, poster_url)
+      else:
+        return "Poster not found for this movie."
+    else:
+      return "No movie listing found."
+
+  except requests.exceptions.RequestException as e:
+    return f"Error fetching data: {e}"
 
 @Client.on_message(filters.command(["poster"]))
-async def landscape_poster(client, message):
-    query = message.text.split(" ", 1)[1] if len(message.text.split(" ", 1)) > 1 else "landscape"
+async def movie_poster(client, message):
+  movie_name = message.text.split(" ", 1)[1] if len(message.text.split(" ", 1)) > 1 else None
 
-    url = f"https://www.bing.com/images/search?q={query}&qft=+filterui:aspect-w4h3+filterui:license-public&form=HDRSC2"
+  if movie_name:
+    poster_url = get_poster_url(movie_name)
+    if poster_url:
+      await client.send_photo(message.chat.id, poster_url, caption=f"Here's the poster for {movie_name}")
+    else:
+      await message.reply_text(poster_url) # Send the error message as text
+  else:
+    await message.reply_text("Please provide a movie name after the /poster command.")
 
-    headers = {
-        "User -Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36"
-    }
 
-    try:
-        response = requests.get(url, headers=headers)
-        response.raise_for_status()
-        soup = BeautifulSoup(response.text, 'html.parser')
-
-        # Find image elements that are likely posters
-        image_elements = soup.find_all('img', attrs={'src': True})
-
-        # Filter out image elements that aren't likely posters
-        poster_elements = [
-            element 
-            for element in image_elements
-            if element['src'].startswith("https://")  # Ensure the src attribute is a direct URL
-        ]
-
-        if poster_elements:
-            image_url = poster_elements[0]['src']  # Take the first matching element
-            await client.send_photo(message.chat.id, image_url, caption="Here's a high-quality landscape poster from Bing!")
-        else:
-            await message.reply_text("No landscape posters found on Bing for this query.")
-    except requests.exceptions.RequestException as e:
-        await message.reply_text(f"Error fetching image: {e}")
