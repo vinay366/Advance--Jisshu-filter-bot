@@ -18,6 +18,22 @@ media_filter = filters.document | filters.video
 
 media_filter = filters.document | filters.video
 
+#@Client.on_message(filters.chat(CHANNELS) & media_filter)
+#async def media(bot, message):
+#    bot_id = bot.me.id
+#    media = getattr(message, message.media.value, None)
+#    if media.mime_type in ['video/mp4', 'video/x-matroska']: 
+#        media.file_type = message.media.value
+#        media.caption = message.caption
+#        success_sts = await save_file(media)
+#        if success_sts == 'suc' :
+#            latest_movie = await get_imdb(media.file_name)
+#            recent_movies.add(latest_movie)
+#            if await db.get_send_movie_update_status(bot_id):
+#                file_id, file_ref = unpack_new_file_id(media.file_id)
+#                await send_movie_updates(bot, file_name=media.file_name, caption=media.caption, file_id=file_id)
+
+
 @Client.on_message(filters.chat(CHANNELS) & media_filter)
 async def media(bot, message):
     bot_id = bot.me.id
@@ -26,12 +42,16 @@ async def media(bot, message):
         media.file_type = message.media.value
         media.caption = message.caption
         success_sts = await save_file(media)
-        if success_sts == 'suc' :
-            latest_movie = await get_imdb(media.file_name)
-            recent_movies.add(latest_movie)
-            if await db.get_send_movie_update_status(bot_id):
-                file_id, file_ref = unpack_new_file_id(media.file_id)
-                await send_movie_updates(bot, file_name=media.file_name, caption=media.caption, file_id=file_id)
+        if success_sts == 'suc':
+            try:
+                latest_movie = await get_imdb(media.file_name)
+                recent_movies.add(latest_movie)
+                if await db.get_send_movie_update_status(bot_id):
+                    file_id, file_ref = unpack_new_file_id(media.file_id)
+                    await send_movie_updates(bot, file_name=media.file_name, caption=media.caption, file_id=file_id)
+             except Exception as e:
+                 print(f"Error - {e}")
+                 await message.reply(f"Error - {e}")
 
 
 @Client.on_message(filters.command(["latest"]))
