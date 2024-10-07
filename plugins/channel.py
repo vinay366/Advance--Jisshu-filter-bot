@@ -49,9 +49,9 @@ async def media(bot, message):
                 if await db.get_send_movie_update_status(bot_id):
                     file_id, file_ref = unpack_new_file_id(media.file_id)
                     await send_movie_updates(bot, file_name=media.file_name, caption=media.caption, file_id=file_id)
-             except Exception as e:
-                 print(f"Error - {e}")
-                 await message.reply(f"Error - {e}")
+            except Exception as e:
+                print(f"Error - {e}")
+                await message.reply(f"Error - {e}")
 
 
 @Client.on_message(filters.command(["latest"]))
