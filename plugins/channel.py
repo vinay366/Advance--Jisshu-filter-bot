@@ -18,22 +18,6 @@ media_filter = filters.document | filters.video
 
 media_filter = filters.document | filters.video
 
-#@Client.on_message(filters.chat(CHANNELS) & media_filter)
-#async def media(bot, message):
-#    bot_id = bot.me.id
-#    media = getattr(message, message.media.value, None)
-#    if media.mime_type in ['video/mp4', 'video/x-matroska']: 
-#        media.file_type = message.media.value
-#        media.caption = message.caption
-#        success_sts = await save_file(media)
-#        if success_sts == 'suc' :
-#            latest_movie = await get_imdb(media.file_name)
-#            recent_movies.add(latest_movie)
-#            if await db.get_send_movie_update_status(bot_id):
-#                file_id, file_ref = unpack_new_file_id(media.file_id)
-#                await send_movie_updates(bot, file_name=media.file_name, caption=media.caption, file_id=file_id)
-
-
 @Client.on_message(filters.chat(CHANNELS) & media_filter)
 async def media(bot, message):
     bot_id = bot.me.id
@@ -43,34 +27,14 @@ async def media(bot, message):
         media.caption = message.caption
         success_sts = await save_file(media)
         if success_sts == 'suc':
-            try:
-                latest_movie = await nb_name(file_name=media.file_name, caption=media.caption)
-                #latest_movie = await get_latest_imdb(movie_name)
-                if latest_movie in recent_movies:
-                    return
-                recent_movies.append(latest_movie)
-                if await db.get_send_movie_update_status(bot_id):
-                    file_id, file_ref = unpack_new_file_id(media.file_id)
-                    await send_movie_updates(bot, file_name=media.file_name, caption=media.caption, file_id=file_id)
-            except Exception as e:
-                print(f"Error - {e}")
-                await message.reply(f"Error - {e}")
-
-async def nb_name(file_name, caption):
-    year_match = re.search(r"\b(19|20)\d{2}\b", caption)
-    year = year_match.group(0) if year_match else None      
-    pattern = r"(?i)(?:s|season)0*(\d{1,2})"
-    season = re.search(pattern, caption)
-    if not season:
-        season = re.search(pattern, file_name) 
-    if year:
-        file_name = file_name[:file_name.find(year) + 4]      
-    if not year:
-        if season:
-            season = season.group(1) if season else None       
-            file_name = file_name[:file_name.find(season) + 1]
-    movie_name = await movie_name_format(file_name)    
-    return movie_name
+            movie_name = modify_name(media.file_name)
+            latest_movie = await get_latest_imdb(movie_name)
+            if latest_movie in recent_movies:
+                return
+            recent_movies.append(latest_movie)
+            if await db.get_send_movie_update_status(bot_id):
+                file_id, file_ref = unpack_new_file_id(media.file_id)
+                await send_movie_updates(bot, file_name=media.file_name, caption=media.caption, file_id=file_id)
 
 
 @Client.on_message(filters.command(["latest"]))
