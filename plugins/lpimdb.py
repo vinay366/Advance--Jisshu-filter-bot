@@ -6,6 +6,7 @@ from bs4 import BeautifulSoup
 from PIL import Image
 
 
+
 @Client.on_message(filters.command("poster"))
 async def poster_handler(client, message):
  """
@@ -24,19 +25,26 @@ async def poster_handler(client, message):
   soup = BeautifulSoup(response.content, 'html.parser')
 
   # Find the first image link (prioritize large images)
-  img_link = soup.find('img', {'class': 'rg_i Q4LuWd'})['src']
+  img_tag = soup.find('img', {'class': 'rg_i Q4LuWd'})
 
-  # Download the image
-  response = requests.get(img_link, stream=True)
-  response.raise_for_status()
-  filename = img_link.split("/")[-1]
-  with open(filename, "wb") as f:
-   for chunk in response.iter_content(chunk_size=8192):
-    f.write(chunk)
+  # Check if an image element was found
+  if img_tag is not None:
+   img_link = img_tag['src']
 
-  # Send the image
-  await message.reply_document(filename)
-  os.remove(filename)
+   # Download the image
+   response = requests.get(img_link, stream=True)
+   response.raise_for_status()
+   filename = img_link.split("/")[-1]
+   with open(filename, "wb") as f:
+    for chunk in response.iter_content(chunk_size=8192):
+     f.write(chunk)
+
+   # Send the image
+   await message.reply_document(filename)
+   os.remove(filename)
+
+  else: # No image found
+   await message.reply("No suitable poster found.")
 
  except requests.exceptions.RequestException as e:
   await message.reply(f"Error: {e}")
