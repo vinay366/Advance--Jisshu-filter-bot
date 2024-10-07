@@ -11,6 +11,8 @@ from utils import get_poster, temp
 import re
 from database.users_chats_db import db
 
+recent_movies = set() 
+
 processed_movies = set()
 media_filter = filters.document | filters.video
 
@@ -24,9 +26,51 @@ async def media(bot, message):
         media.file_type = message.media.value
         media.caption = message.caption
         success_sts = await save_file(media)
-        if success_sts == 'suc' and await db.get_send_movie_update_status(bot_id):
-            file_id, file_ref = unpack_new_file_id(media.file_id)
-            await send_movie_updates(bot, file_name=media.file_name, caption=media.caption, file_id=file_id)
+        if success_sts == 'suc' :
+            latest_movie = await get_imdb(media.file_name)
+            recent_movies.add(latest_movie)
+            if await db.get_send_movie_update_status(bot_id):
+                file_id, file_ref = unpack_new_file_id(media.file_id)
+                await send_movie_updates(bot, file_name=media.file_name, caption=media.caption, file_id=file_id)
+
+
+@Client.on_message(filters.command(["latest"]))
+async def latest_movies(bot, message):
+  """
+  Handles the /latest command to show the last 20 uploaded movies.
+  """
+  try:
+    # Get the last 20 movies from the temporary container
+    last_movies = list(recent_movies)[-20:]
+
+    # Build the message with the movie names
+    message_text = "**Latest Movies:**\n\n"
+    for movie_name in last_movies:
+      message_text += f"• {movie_name}\n"
+
+    # Send the message to the user
+    await message.reply_text(message_text)
+
+  except Exception as e:
+    print(f"Error showing latest movies: {e}")
+    await bot.send_message(LOG_CHANNEL, f"Error showing latest movies: {e}")
+
+
+def name_format(file_name: str):
+    file_name = file_name.lower()
+    file_name = re.sub(r'http\S+', '', re.sub(r'@\w+|#\w+', '', file_name).replace('_', ' ').replace('[', '').replace(']', '')).strip()
+    file_name = re.split(r's\d+|season\s*\d+|chapter\s*\d+', file_name, flags=re.IGNORECASE)[0]
+    file_name = file_name.strip()
+    words = file_name.split()[:4]
+    movie_file_name = ' '.join(words)
+    return movie_file_name
+
+async def get_latest_imdb(file_name):
+    movie_file_name = await name_format(file_name)
+    imdb = await get_poster(movie_file_name)
+    if imdb:
+        return imdb.get('title')
+    return None
 
 async def get_imdb(file_name):
     imdb_file_name = await movie_name_format(file_name)
