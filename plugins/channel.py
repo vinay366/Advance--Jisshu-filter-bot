@@ -44,8 +44,8 @@ async def media(bot, message):
         success_sts = await save_file(media)
         if success_sts == 'suc':
             try:
-                movie_name = modify_name(media.file_name)
-                latest_movie = await get_latest_imdb(movie_name)
+                latest_movie = await nb_name(file_name=media.file_name, caption=media.caption)
+                #latest_movie = await get_latest_imdb(movie_name)
                 if latest_movie in recent_movies:
                     return
                 recent_movies.append(latest_movie)
@@ -55,6 +55,22 @@ async def media(bot, message):
             except Exception as e:
                 print(f"Error - {e}")
                 await message.reply(f"Error - {e}")
+
+async def nb_name(file_name, caption):
+    year_match = re.search(r"\b(19|20)\d{2}\b", caption)
+    year = year_match.group(0) if year_match else None      
+    pattern = r"(?i)(?:s|season)0*(\d{1,2})"
+    season = re.search(pattern, caption)
+    if not season:
+        season = re.search(pattern, file_name) 
+    if year:
+        file_name = file_name[:file_name.find(year) + 4]      
+    if not year:
+        if season:
+            season = season.group(1) if season else None       
+            file_name = file_name[:file_name.find(season) + 1]
+     movie_name = await movie_name_format(file_name)
+     return movie_name
 
 
 @Client.on_message(filters.command(["latest"]))
