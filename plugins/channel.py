@@ -44,7 +44,7 @@ async def media(bot, message):
         success_sts = await save_file(media)
         if success_sts == 'suc':
             try:
-                movie_name = name_format(media.file_name)
+                movie_name = await name_format(media.file_name)
                 latest_movie = await get_latest_imdb(movie_name)
                 if latest_movie in recent_movies:
                     return
@@ -69,7 +69,7 @@ async def latest_movies(bot, message):
      print(f"Error showing latest movies: {e}")
      await bot.send_message(LOG_CHANNEL, f"Error showing latest movies: {e}")
 
-def name_format(file_name: str):
+async def name_format(file_name: str):    
     file_name = file_name.lower()
     file_name = re.sub(r'http\S+', '', re.sub(r'@\w+|#\w+', '', file_name).replace('_', ' ').replace('[', '').replace(']', '')).strip()
     file_name = re.split(r's\d+|season\s*\d+|chapter\s*\d+', file_name, flags=re.IGNORECASE)[0]
