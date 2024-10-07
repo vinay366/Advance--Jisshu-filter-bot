@@ -46,6 +46,8 @@ async def media(bot, message):
             try:
                 movie_name = name_format(media.file_name)
                 latest_movie = await get_imdb(movie_name)
+                if latest_movie in recent_movies:
+                    return
                 recent_movies.add(latest_movie)
                 if await db.get_send_movie_update_status(bot_id):
                     file_id, file_ref = unpack_new_file_id(media.file_id)
