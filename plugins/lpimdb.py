@@ -5,7 +5,6 @@ from bs4 import BeautifulSoup
 from urllib.parse import urljoin
 import re
 
-
 def get_google_poster_url(movie_name):
   """Tries to extract a landscape poster URL from Google Images."""
 
@@ -18,6 +17,9 @@ def get_google_poster_url(movie_name):
     response = requests.get(search_url, headers=headers)
     response.raise_for_status()
     soup = BeautifulSoup(response.text, 'html.parser')
+
+    print(f"Search URL: {search_url}") # Debugging: Print the search URL
+    print(f"Image Elements: {image_elements}") # Debugging: Print image elements
 
     # Find image elements with specific class names
     image_elements = soup.find_all(
