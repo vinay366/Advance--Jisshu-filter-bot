@@ -1,57 +1,28 @@
-import os
-import requests
 from pyrogram import Client, filters
 from pyrogram.types import Message
+import requests
 from bs4 import BeautifulSoup
-from PIL import Image
 
-# ... (Your API ID, API Hash, and TMDB API Key) ...
+@Client.on_message(filters.command(["poster"]))
+async def landscape_poster(client, message):
+    query = message.text.split(" ", 1)[1] if len(message.text.split(" ", 1)) > 1 else "landscape"
+    url = f"https://www.bing.com/images/search?q={query}&qft=+filterui:aspect-w4h3+filterui:license-public"
 
-@Client.on_message(filters.command("poster"))
-async def poster_handler(client, message):
-  """
-  This handler will process messages starting with /poster and download a movie poster.
-  It uses Bing Images to search for landscape posters.
-  """
-  try:
-    movie_title = message.text.split(" ", 1)[1]
-    search_term = f"{movie_title} movie poster landscape"
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36"
+    }
 
-    # Search Bing Images (without image size filter)
-    bing_search_url = f"https://www.bing.com/images/search?q={search_term}"
-    response = requests.get(bing_search_url, headers={'User-Agent': 'Mozilla/5.0'})
-    response.raise_for_status()
+    try:
+        response = requests.get(url, headers=headers)
+        response.raise_for_status()  # Raise an exception for bad status codes
+        soup = BeautifulSoup(response.text, 'html.parser')
 
-    soup = BeautifulSoup(response.content, 'html.parser')
+        image_elements = soup.find_all("img", class_="mimg")
 
-    # Find the first image link 
-    img_tag = soup.find('a', {'class': 'ius_s'}) # Adjust selector if needed
-    if img_tag is not None:
-      img_link = img_tag['href'] # Extract the href attribute
-      img_link = img_link.split("&")[0] # Get the base URL part of the link
-
-      # Download the image
-      response = requests.get(img_link, stream=True)
-      response.raise_for_status()
-      filename = img_link.split("/")[-1]
-      with open(filename, "wb") as f:
-        for chunk in response.iter_content(chunk_size=8192):
-          f.write(chunk)
-
-      # Check aspect ratio and send
-      img = Image.open(filename)
-      width, height = img.size
-      if width / height > 1.0: # Landscape aspect ratio
-        await message.reply_document(filename)
-        os.remove(filename)
-        return # Success, stop searching
-
-      os.remove(filename) # Delete if not landscape
-
-    await message.reply("No suitable landscape poster found. Please try a different search term.")
-
-  except requests.exceptions.RequestException as e:
-    await message.reply(f"Error: {e}")
-  except Exception as e: # Catch any other potential errors
-    await message.reply(f"An error occurred: {e}")
-
+        if image_elements:
+            image_url = image_elements[0]['src']
+            await client.send_photo(message.chat.id, image_url, caption="Here's a landscape poster from Bing!")
+        else:
+            await message.reply_text("No landscape posters found on Bing for this query.")
+    except requests.exceptions.RequestException as e:
+        await message.reply_text(f"Error fetching image: {e}")
