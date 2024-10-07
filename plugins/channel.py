@@ -69,8 +69,8 @@ async def nb_name(file_name, caption):
         if season:
             season = season.group(1) if season else None       
             file_name = file_name[:file_name.find(season) + 1]
-     movie_name = await movie_name_format(file_name)
-     return movie_name
+    movie_name = await movie_name_format(file_name)    
+    return movie_name
 
 
 @Client.on_message(filters.command(["latest"]))
