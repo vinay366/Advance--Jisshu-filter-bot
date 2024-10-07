@@ -3,45 +3,74 @@ from pyrogram.types import Message
 import requests
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin
+import re
 
+api_id = # Your Telegram API ID
+api_hash = # Your Telegram API Hash
 
-def get_poster_url(movie_name):
-  """Tries to extract the poster URL from BookMyShow for a given movie."""
+app = Client("my_account", api_id=api_id, api_hash=api_hash)
 
-  base_url = "https://in.bookmyshow.com"
-  search_url = f"{base_url}/search/movies?q={movie_name}"
+async def get_google_poster_url(movie_name):
+  """Tries to extract a landscape poster URL from Google Images."""
+
+  search_url = f"https://www.google.com/search?q={movie_name}+poster&tbm=isch&tbs=isz:l" # Landscape filter
+  headers = {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36"
+  }
 
   try:
-    response = requests.get(search_url)
-    response.raise_for_status() 
-
+    response = requests.get(search_url, headers=headers)
+    response.raise_for_status()
     soup = BeautifulSoup(response.text, 'html.parser')
 
-    movie_listing = soup.find('div', class_='movie-listing')
-    if movie_listing:
-      poster_element = movie_listing.find('img', class_='movie-poster')
-      if poster_element:
-        poster_url = poster_element['src']
-        return urljoin(base_url, poster_url)
-      else:
-        return "Poster not found for this movie."
+    # Find image elements with specific class names
+    image_elements = soup.find_all(
+      'img', 
+      attrs={'src': True, 'alt': True, 'data-src': True},
+      class_=['rg_i', 'yWs4tf'] # Common classes for Google image results
+    )
+
+    # Prioritize elements with 'rg_i' class for better chances of landscape
+    poster_elements = [
+      element
+      for element in image_elements
+      if 'rg_i' in element.get('class', []) and 'poster' in element.get('alt', '').lower()
+    ]
+
+    if poster_elements:
+      # Try to find the most likely landscape image by checking for aspect ratio
+      for element in poster_elements:
+        if 'data-src' in element.attrs:
+          url = element['data-src']
+        else:
+          url = element['src']
+
+        # Extract width and height from the URL (if present)
+        match = re.search(r'w(\d+)-h(\d+)', url)
+        if match:
+          width = int(match.group(1))
+          height = int(match.group(2))
+          if width > height: # Landscape
+            return url
+
+      # If no clear landscape found, return the first poster
+      return poster_elements[0]['src']
     else:
-      return "No movie listing found."
+      return "No landscape posters found on Google Images."
 
   except requests.exceptions.RequestException as e:
-    return f"Error fetching data: {e}"
+    return f"Error fetching images: {e}"
 
 @Client.on_message(filters.command(["poster"]))
 async def movie_poster(client, message):
   movie_name = message.text.split(" ", 1)[1] if len(message.text.split(" ", 1)) > 1 else None
 
   if movie_name:
-    poster_url = get_poster_url(movie_name)
+    poster_url = await get_google_poster_url(movie_name)
     if poster_url:
-      await client.send_photo(message.chat.id, poster_url, caption=f"Here's the poster for {movie_name}")
+      await client.send_photo(message.chat.id, poster_url, caption=f"Here's a landscape poster for {movie_name}")
     else:
       await message.reply_text(poster_url) # Send the error message as text
   else:
     await message.reply_text("Please provide a movie name after the /poster command.")
-
 
