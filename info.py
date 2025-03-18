@@ -18,11 +18,11 @@ API_HASH = environ.get('API_HASH', '')
 BOT_TOKEN = environ.get('BOT_TOKEN', '')
 #---------------------------------------------------------------
 #---------------------------------------------------------------
-ADMINS = [int(admin) if id_pattern.search(admin) else admin for admin in environ.get('ADMINS', '6418234245').split()]
-USERNAME = environ.get('USERNAME', "https://t.me/IM_JISSHU") # ADMIN USERNAME
-LOG_CHANNEL = int(environ.get('LOG_CHANNEL', '-1002105216604'))
-MOVIE_GROUP_LINK = environ.get('MOVIE_GROUP_LINK', 'https://t.me/JisshuMovieZone')
-CHANNELS = [int(ch) if id_pattern.search(ch) else ch for ch in environ.get('CHANNELS', '-1002132977892').split()]
+ADMINS = [int(admin) if id_pattern.search(admin) else admin for admin in environ.get('ADMINS', '485355247').split()]
+USERNAME = environ.get('USERNAME', "https://t.me/VinayMudhiraj") # ADMIN USERNAME
+LOG_CHANNEL = int(environ.get('LOG_CHANNEL', '-1001679634331'))
+MOVIE_GROUP_LINK = environ.get('MOVIE_GROUP_LINK', 'https://t.me/TCU_TCU')
+CHANNELS = [int(ch) if id_pattern.search(ch) else ch for ch in environ.get('CHANNELS', '-1001925003212').split()]
 #---------------------------------------------------------------
 #---------------------------------------------------------------
 DATABASE_URI = environ.get('DATABASE_URI', "")
@@ -31,33 +31,33 @@ COLLECTION_NAME = environ.get('COLLECTION_NAME', 'Telegram_files')
 #---------------------------------------------------------------
 #---------------------------------------------------------------
 #----------- There will be channel id add in all these ---------
-LOG_API_CHANNEL = int(environ.get('LOG_API_CHANNEL', '-1002105216604'))  # set shortner log channel
-DELETE_CHANNELS = int(environ.get('DELETE_CHANNELS','0')) # The movie you upload in it will be deleted from the bot.
-LOG_VR_CHANNEL = int(environ.get('LOG_VR_CHANNEL', '-1002105216604'))
-auth_channel = environ.get('AUTH_CHANNEL', '-1002105216604')
-SUPPORT_GROUP = int(environ.get('SUPPORT_GROUP', '-1002105216604'))
-request_channel = environ.get('REQUEST_CHANNEL', '-1002105216604') # If anyone sends a request message to your bot, you will get it in this channel.
-MOVIE_UPDATE_CHANNEL = int(environ.get('MOVIE_UPDATE_CHANNEL', '-1002105216604')) # 
-SUPPORT_CHAT = environ.get('SUPPORT_CHAT', 'https://t.me/Botszone_minata') #Support group link ( make sure bot is admin )
+LOG_API_CHANNEL = int(environ.get('LOG_API_CHANNEL', '-1001679634331'))  # set shortner log channel
+DELETE_CHANNELS = int(environ.get('DELETE_CHANNELS','-1001890543704')) # The movie you upload in it will be deleted from the bot.
+LOG_VR_CHANNEL = int(environ.get('LOG_VR_CHANNEL', '-1001679634331'))
+auth_channel = environ.get('AUTH_CHANNEL', '-1001530072953 -1001638697031 -1001888458129 -1002477423560')
+SUPPORT_GROUP = int(environ.get('SUPPORT_GROUP', '-1002330410177'))
+request_channel = environ.get('REQUEST_CHANNEL', '-1002330410177') # If anyone sends a request message to your bot, you will get it in this channel.
+MOVIE_UPDATE_CHANNEL = int(environ.get('MOVIE_UPDATE_CHANNEL', '-1002330410177')) # 
+SUPPORT_CHAT = environ.get('SUPPORT_CHAT', 'https://t.me/tcu_support') #Support group link ( make sure bot is admin )
 #---------------------------------------------------------------
 #---------------------------------------------------------------
 IS_VERIFY = is_enabled('IS_VERIFY', True)
 #---------------------------------------------------------------
-TUTORIAL = environ.get("TUTORIAL", "https://t.me/Botszone_minata")
-TUTORIAL_2 = environ.get("TUTORIAL_2", "https://t.me/Botszone_minata")
-TUTORIAL_3 = environ.get("TUTORIAL_3", "https://t.me/Botszone_minata")
+TUTORIAL = environ.get("TUTORIAL", "https://t.me/TCU_TCU")
+TUTORIAL_2 = environ.get("TUTORIAL_2", "https://t.me/TCU_TCU")
+TUTORIAL_3 = environ.get("TUTORIAL_3", "https://t.me/TCU_TCU")
 VERIFY_IMG = environ.get("VERIFY_IMG", "https://graph.org/file/1669ab9af68eaa62c3ca4.jpg")
-SHORTENER_API = environ.get("SHORTENER_API", "3097623f852197a9ce40d1212aaa8bbf2803e799")
-SHORTENER_WEBSITE = environ.get("SHORTENER_WEBSITE", 'omegalinks.in')
-SHORTENER_API2 = environ.get("SHORTENER_API2", "3097623f852197a9ce40d1212aaa8bbf2803e799")
-SHORTENER_WEBSITE2 = environ.get("SHORTENER_WEBSITE2", 'omegalinks.in')
-SHORTENER_API3 = environ.get("SHORTENER_API3", "3097623f852197a9ce40d1212aaa8bbf2803e799")
-SHORTENER_WEBSITE3 = environ.get("SHORTENER_WEBSITE3", 'omegalinks.in')
+SHORTENER_API = environ.get("SHORTENER_API", "3ab0a0baa69ac0405dda82b487d74c046d83dda7")
+SHORTENER_WEBSITE = environ.get("SHORTENER_WEBSITE", 'api.gplinks.com')
+SHORTENER_API2 = environ.get("SHORTENER_API2", "3ab0a0baa69ac0405dda82b487d74c046d83dda7")
+SHORTENER_WEBSITE2 = environ.get("SHORTENER_WEBSITE2", 'api.gplinks.com')
+SHORTENER_API3 = environ.get("SHORTENER_API3", "3ab0a0baa69ac0405dda82b487d74c046d83dda7")
+SHORTENER_WEBSITE3 = environ.get("SHORTENER_WEBSITE3", 'api.gplinks.com')
 TWO_VERIFY_GAP = int(environ.get('TWO_VERIFY_GAP', "14400"))
 THREE_VERIFY_GAP = int(environ.get('THREE_VERIFY_GAP', "14400"))
 #---------------------------------------------------------------
 #---------------------------------------------------------------
-LANGUAGES = ["hindi", "english", "telugu", "tamil", "kannada", "malayalam", "bengali", "marathi", "gujarati", "punjabi"]
+LANGUAGES = ["telugu", "english", "hindi", "tamil", "kannada", "malayalam", "bengali", "marathi", "gujarati", "punjabi"]
 QUALITIES = ["HdRip","web-dl" ,"bluray", "hdr", "fhd" , "240p", "360p", "480p", "540p", "720p", "960p", "1080p", "1440p", "2K", "2160p", "4k", "5K", "8K"]
 YEARS = [f'{i}' for i in range(2024 , 2002,-1 )]
 SEASONS = [f'season {i}'for i in range (1 , 23)]
@@ -69,11 +69,11 @@ REQUEST_CHANNEL = int(request_channel) if request_channel and id_pattern.search(
 #---------------------------------------------------------------
 #---------------------------------------------------------------
 #---------------------------------------------------------------
-START_IMG = (environ.get('START_IMG', 'https://i.ibb.co/qpxpGmC/image.jpg https://i.ibb.co/DQ35zLZ/image.jpg')).split()
+START_IMG = (environ.get('START_IMG', 'https://envs.sh/wgO.png https://envs.sh/IO4.jpg')).split()
 FORCESUB_IMG = environ.get('FORCESUB_IMG', 'https://i.ibb.co/ZNC1Hnb/ad3f2c88a8f2.jpg')
-REFER_PICS = (environ.get("REFER_PICS", "https://envs.sh/PSI.jpg")).split() 
-PAYPICS = (environ.get('PAYPICS', 'https://graph.org/file/f4db1c3ad3d9e38b328e6.jpg')).split()
-SUBSCRIPTION = (environ.get('SUBSCRIPTION', 'https://graph.org/file/9f3f47c690bbcc67633c2.jpg'))
+REFER_PICS = (environ.get("REFER_PICS", "https://envs.sh/IOl.png")).split() 
+PAYPICS = (environ.get('PAYPICS', 'https://telegra.ph/file/3da771cb73778ffec8ed8.jpg')).split()
+SUBSCRIPTION = (environ.get('SUBSCRIPTION', 'https://envs.sh/IOk.jpg'))
 REACTIONS = ["👀", "😱", "🔥", "😍", "🎉", "🥰", "😇", "⚡"]
 #---------------------------------------------------------------
 #---------------------------------------------------------------
@@ -83,7 +83,7 @@ AUTO_FILTER = is_enabled('AUTO_FILTER', True)
 IS_PM_SEARCH = is_enabled('IS_PM_SEARCH', False)
 IS_SEND_MOVIE_UPDATE = is_enabled('IS_SEND_MOVIE_UPDATE', False) # Don't Change It ( If You Want To Turn It On Then Turn It On By Commands) We Suggest Make It Turn Of If You Indexing Files First Time.
 PORT = environ.get('PORT', '5000')
-MAX_BTN = int(environ.get('MAX_BTN', '8'))
+MAX_BTN = int(environ.get('MAX_BTN', '10'))
 AUTO_DELETE = is_enabled('AUTO_DELETE', True)
 DELETE_TIME = int(environ.get('DELETE_TIME', 1200))
 IMDB = is_enabled('IMDB', False)
